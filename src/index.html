@@ -606,13 +606,14 @@ function drawPlayer(){ if(flyin>0&&flyin%8>4) return;
 // [scroll, type, x, count, spacing(frames), options]
 var SCHED=[
   [40,0,40,5,14],[90,0,150,5,14],[220,1,96,1,0],[300,0,60,6,10],[330,0,130,6,10],
-  [450,1,50,1,0],[450,1,140,1,0],[520,6,60,1,0],[560,2,96,1,0],[640,3,70,1,0,{uni:2}],[700,0,30,8,9],[760,1,160,1,0],
+  [450,1,50,1,0],[450,1,140,1,0],[520,6,60,0,0],[560,2,96,1,0],[640,3,70,1,0,{uni:2}],[700,0,30,8,9],[760,1,160,1,0],
   [900,2,60,1,0],[900,2,130,1,0],[980,0,96,8,8],[1080,3,120,1,0,{uni:3}],[1150,1,40,1,0],[1150,1,96,1,0],[1150,1,150,1,0],[1250,6,140,1,0],
   [1300,0,20,10,7],[1300,0,170,10,7],[1420,2,96,1,0],[1500,3,60,1,0,{uni:4}],[1560,1,130,1,0],[1650,0,96,12,6],
   [1800,3,96,1,0,{uni:4}],[1800,1,30,1,0],[1800,1,160,1,0],[1900,6,96,1,0],[1950,2,50,1,0],[1950,2,140,1,0],[2150,5,96,1,0]];
 // Second half: the same layout replays 2300 further on (enemies are tougher
-// there, see spawn), then the real boss.
-SCHED=SCHED.concat(SCHED.map(function(w){ return [w[0]+2300,w[1],w[1]==5?96:LW-w[2],w[3],w[4],w[5]]; }));
+// there, see spawn), then the real boss. A count of 0 skips an entry in the
+// first half and replays it once in the mirror (the first ground tank).
+SCHED=SCHED.concat(SCHED.map(function(w){ return [w[0]+2300,w[1],w[1]==5?96:LW-w[2],w[3]||1,w[4],w[5]]; }));
 SCHED.push([4550,4,96,1,0]);
 function updSched(){ scroll+=spd;
   if(land<1){ scr0=scroll; runStart=t; return; }

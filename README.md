@@ -121,7 +121,7 @@ deliverables and intermediate files are ignored.
 
 The limit applies to **the complete ZIP archive: 13,312 bytes**, not to the size
 of the source or of the uncompressed HTML. Measured size of the ZIP present on
-September 11, 2026: **13,290 bytes**, leaving **22 bytes of headroom**. This
+September 11, 2026: **13,279 bytes**, leaving **33 bytes of headroom**. This
 measurement can change with every rebuild.
 
 The check lives in [build.js](build.js), with the constant `LIMIT=13312`:
