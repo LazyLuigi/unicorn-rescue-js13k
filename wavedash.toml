@@ -1,0 +1,4 @@
+game_id = "j974qy0y9jwn1e22paksakgrrh8e7prw"
+upload_dir = "dist/wavedash"
+
+entrypoint = "index.html"

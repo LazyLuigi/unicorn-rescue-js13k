@@ -1,0 +1,15 @@
+{
+  "achievements": [
+    {"identifier":"RESCUE","display_name":"First Rescue","description":"Free the unicorns from your first prison.","stat_requirement":null},
+    {"identifier":"BLADE","display_name":"Horn Awakened","description":"Activate Horn Blade.","stat_requirement":null},
+    {"identifier":"BLAST","display_name":"Rainbow Unleashed","description":"Activate Rainbow Blast.","stat_requirement":null},
+    {"identifier":"SAVE","display_name":"Last Second","description":"Avoid losing a life by activating a power during the last-chance window.","stat_requirement":null},
+    {"identifier":"COMBO","display_name":"Chain Reaction","description":"Destroy 10 enemies in one uninterrupted combo.","stat_requirement":null},
+    {"identifier":"GRAZE","display_name":"Living on the Edge","description":"Graze 30 enemy projectiles in one run.","stat_requirement":null},
+    {"identifier":"GIANT","display_name":"Giant Slayer","description":"Defeat a mini-boss.","stat_requirement":null},
+    {"identifier":"WIN","display_name":"Island Saved","description":"Defeat the final boss.","stat_requirement":null},
+    {"identifier":"ALL","display_name":"Nobody Left Behind","description":"Win with all 43 unicorns rescued.","stat_requirement":null},
+    {"identifier":"ACE","display_name":"Ace Pilot","description":"Win without losing a life. Power shields and last-chance saves are allowed.","stat_requirement":null}
+  ],
+  "stats": []
+}

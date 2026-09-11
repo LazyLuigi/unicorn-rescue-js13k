@@ -1,0 +1,28 @@
+{
+  "name": "unicorn-rescue",
+  "version": "1.0.0",
+  "description": "Pastel vertical shmup for js13kGames 2026 (theme: Unicorns and Rainbows)",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "node build.js --best=3",
+    "build:fast": "node build.js --no-rr",
+    "build:alpha": "node build.js --alpha --best=3",
+    "build:autopilot": "node build.js --autopilot",
+    "autotest": "node tools/autotest.js 3",
+    "test": "node tools/play.js && node tools/strict.js && node tools/crash.js && node tools/sched.js",
+    "shots": "node tools/phone.js",
+    "test:browser": "node tools/browser-test.cjs",
+    "test:equivalence": "node tools/equivalence.cjs",
+    "test:render": "node tools/render-compare.cjs",
+    "test:wavedash": "node tools/wavedash-test.cjs",
+    "test:wavedash:browser": "node tools/wavedash-browser-test.cjs",
+    "test:build": "node tools/build-test.cjs"
+  },
+  "devDependencies": {
+    "canvas": "^3",
+    "roadroller": "^2.1.0",
+    "terser": "^5.31.0",
+    "playwright": "^1.63.0"
+  }
+}

@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+.shots/
+dist/
+*.zip
+.build/
+!/package-lock.json
+.dream-loop/
+.js13k-check/
+.size-opt/
+media/**/.js13k-images/
+media/js13k-description.md

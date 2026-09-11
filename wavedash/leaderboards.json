@@ -1,0 +1,8 @@
+{
+  "description": "Local specification for later portal setup; not a Wavedash bulk-import format.",
+  "leaderboards": [
+    {"name":"high-score","display_name":"High Score","sort_order":1,"display_type":0,"keep_best":true,"eligibility":"Any completed run, including game over.","value":"Final score; highest wins."},
+    {"name":"fastest-rescue","display_name":"Fastest Rescue","sort_order":0,"display_type":2,"keep_best":true,"eligibility":"Victory against the final boss.","value":"Active game time in milliseconds after the descent, including hitstop and respawns but excluding briefing, descent and pauses; lowest wins."},
+    {"name":"perfect-rescue-score","display_name":"Perfect Rescue Score","sort_order":1,"display_type":0,"keep_best":true,"eligibility":"Victory with exactly 43 unicorns rescued.","value":"Final score; highest wins. No time-based ranking."}
+  ]
+}
