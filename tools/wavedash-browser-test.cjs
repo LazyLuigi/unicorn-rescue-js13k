@@ -17,9 +17,8 @@ assert(fs.readFileSync(path.join(tmp,'index.html')).equals(fs.readFileSync('dist
     window.AudioContext=window.webkitAudioContext=undefined;window.requestAnimationFrame=f=>window.nextFrame=f;
     window.advance=n=>{for(let i=0;i<n;i++)nextFrame(ts+=1000/60)};
     window.sdkCalls=[];window.badArgs=[];const unlocked=new Set();
-    if(enabled)window.URW=1;
-    window.Wavedash={
-     init(){sdkCalls.push(['init']);},requestStats(){sdkCalls.push(['stats']);return Promise.resolve({success:true})},
+    if(enabled)window.Wavedash={
+     init(){sdkCalls.push(['init']);},requestStats(){sdkCalls.push(['stats']);return Promise.resolve({success:true,data:true})},
      getAchievement(id){return unlocked.has(id)},
      setAchievement(id,persist){if(!ids.includes(id)||persist!==true)badArgs.push('achievement');unlocked.add(id);sdkCalls.push(['award',id]);return true},
      getOrCreateLeaderboard(name,sort,display){
@@ -28,7 +27,7 @@ assert(fs.readFileSync(path.join(tmp,'index.html')).equals(fs.readFileSync('dist
      },
      uploadLeaderboardScore(id,value,keep){
       if(!boards.some(b=>b.name===id)||!Number.isInteger(value)||keep!==true)badArgs.push('score');
-      sdkCalls.push(['score',id,value]);return Promise.resolve({success:true});
+      sdkCalls.push(['score',id,value]);return Promise.resolve({success:true,data:true});
      }
     };
    },{enabled,ids,boards});
@@ -44,8 +43,8 @@ assert(fs.readFileSync(path.join(tmp,'index.html')).equals(fs.readFileSync('dist
    if(enabled){
     assert.equal(calls.filter(c=>c[0]==='init').length,1);assert.equal(calls.filter(c=>c[0]==='stats').length,1);
     assert(calls.some(c=>c[0]==='score'&&c[1]==='high-score'),'end-of-run score in the real ZIP');
-   }else assert.deepEqual(calls,[],'no SDK initialization/call by default');
-   console.log('PASS '+engine.name()+': '+(target.startsWith(tmp)?'ZIP':'raw Wavedash')+', fake SDK '+(enabled?'enabled: contract and score submission valid':'present but integration disabled: 0 calls'));
+   }else assert.deepEqual(calls,[],'no platform call without SDK');
+   console.log('PASS '+engine.name()+': '+(target.startsWith(tmp)?'ZIP':'raw Wavedash')+', fake SDK '+(enabled?'injected: automatic init, contract and score submission valid':'absent: 0 calls'));
    await page.close();
   }}finally{await browser.close()}
  }

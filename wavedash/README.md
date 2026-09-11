@@ -1,24 +1,29 @@
-# Wavedash integration, prepared but disabled
+# Wavedash integration
 
 The code for the 10 achievements and the 3 leaderboards ships inside the js13k
 ZIP. The SDK is provided by the Wavedash host: the game downloads no SDK and no
 external resource.
 
-**No Wavedash initialization runs by default.** The game requires both
-`self.URW` and `self.Wavedash` before keeping a reference to the SDK. The first
-one is a local activation lock, absent from the delivered HTML. It lets the tests
-exercise the code with a stand-in; it will only be enabled once the platform
-configuration is approved.
-
-No `wavedash init`, login, game creation, trophy import, deployment or
-publication has been performed for this integration.
+When the host injects `self.Wavedash`, the game calls `init()` immediately to
+release the platform loader, then requests stats. No extra activation flag is
+needed. Outside Wavedash, the SDK is absent and the integration makes no calls.
+Remote achievement definitions and connected score submission remain to be
+verified on the platform; local tests use a fake SDK.
 
 ## Build output
 
 `npm run build` produces `dist/wavedash/index.html`, an untouched copy of
 `src/index.html`, without minification or Roadroller. `wavedash.toml` points to
-that folder and that entry point, and holds the game identifier. The activation
-lock stays disabled in both deliverables.
+that folder and that entry point, and holds the game identifier.
+
+```bash
+npm run build
+wavedash dev
+```
+
+The CLI serves the built folder, so rebuild and reload after source changes.
+Use the rebuilt `dist/wavedash` for uploads too. The SDK initialization call is
+part of the game; it does not create or publish a platform project.
 
 ## Achievements
 
@@ -39,7 +44,7 @@ descriptions live in the JSON, outside the 13k budget.
 | ALL | Nobody Left Behind | Win with all 43 unicorns |
 | ACE | Ace Pilot | Win with all three lives; absorbed hits and last-chance saves are allowed |
 
-Once enabled, the integration waits for the `requestStats()` response before
+The integration waits for `requestStats()` with `success && data === true` before
 triggering the trophies already earned during that load. `getAchievement()`
 avoids repeated submissions. Trophies must exist in the portal to be recognized;
 the local JSON does not create them on the platform.
@@ -74,8 +79,8 @@ The first test exercises the real game events, then their Terser-minified
 version: thresholds, ten trophies, leaderboard eligibility, pauses, restart
 before the network response, deferred stats loading, deduplication and 19 SDK
 failure cases. The second one tests the extracted ZIP and the raw Wavedash HTML
-with a fake SDK in both browsers, first without activation (zero calls), then
-with local activation to validate the loading calls and the score submission.
+with a fake SDK in both browsers, first without the SDK (zero calls), then
+with an injected fake SDK to validate the loading calls and the score submission.
 None of these tests touches the platform.
 
 References: [SDK](https://docs.wavedash.com/sdk/setup),

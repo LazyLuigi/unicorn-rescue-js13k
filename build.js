@@ -70,7 +70,7 @@ const stage=mkdtempSync(resolve('.build/stage-'));
         if(hadDist)renameSync(backup,'dist');
         throw e;
       }
-      console.log('dist/js13k/index.html (Roadroller) | dist/wavedash/index.html (untouched source, SDK inactive)');
+      console.log('dist/js13k/index.html (Roadroller) | dist/wavedash/index.html (untouched source, host-injected SDK)');
     }
     console.log(ZIP,'|',best.zip.length,'bytes | headroom',LIMIT-best.zip.length,'| source JS',Buffer.byteLength(js),'| terser',Buffer.byteLength(minified));
   }

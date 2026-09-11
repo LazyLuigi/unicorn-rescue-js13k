@@ -791,15 +791,14 @@ function loop(ts){ requestAnimationFrame(loop);
   render(); }
 requestAnimationFrame(loop);
 
-// ---------- Wavedash: prepared, disabled until self.URW is enabled ----------
-// URW must be defined BEFORE the game loads, once the portal is configured.
-// No SDK is downloaded; no init/network call without this explicit opt-in.
+// ---------- Wavedash: initialize when the host injects its SDK ----------
+// No SDK is downloaded; ordinary browsers run without platform calls.
 // Short identifiers, public names and conditions in wavedash/achievements.json.
-var WD=self.URW&&self.Wavedash, wdStats, runStart=0;
+var WD=self.Wavedash, wdStats, runStart=0;
 function guard(f){ if(WD) try{ var q=f(); if(q&&q.catch) q.catch(function(){}); }catch(e){} }
 // The shared load holds back trophies earned before its response arrives.
 function award(id){ guard(function(){ return wdStats.then(function(r){
-  if(r&&r.success&&!WD.getAchievement(id)) return WD.setAchievement(id,true); }); }); }
+  if(r&&r.success&&r.data===true&&!WD.getAchievement(id)) return WD.setAchievement(id,true); }); }); }
 // value is frozen before the network round trip, even if another run starts.
 function board(name,value,time){ guard(function(){ return WD.getOrCreateLeaderboard(name,time?0:1,time?2:0).then(function(r){
   if(r&&r.success) return WD.uploadLeaderboardScore(r.data.id,value,true); }); }); }

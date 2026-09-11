@@ -23,12 +23,12 @@ self.test={
 };`;
 const tick=()=>new Promise(r=>setTimeout(r,10));
 function deferred(){let resolve;const promise=new Promise(r=>resolve=r);return {promise,resolve};}
-function make(code,{enabled=true,absent=false,scenario='',statsGate,boardGate}={}){
+function make(code,{absent=false,scenario='',statsGate,boardGate}={}){
  const calls=[],violations=[],unlocked=new Set();
  const validate=(x,message)=>{if(!x)violations.push(message)};
  const sdk={
   init(){calls.push(['init']);},
-  requestStats(){calls.push(['stats']);return statsGate?statsGate.promise:Promise.resolve({success:true});},
+  requestStats(){calls.push(['stats']);return statsGate?statsGate.promise:Promise.resolve({success:true,data:true});},
   getAchievement(id){validate(ids.has(id),'unknown achievement '+id);return unlocked.has(id);},
   setAchievement(id,store){validate(ids.has(id)&&store===true,'achievement arguments');calls.push(['award',id]);unlocked.add(id);return true;},
   getOrCreateLeaderboard(name,sort,display){
@@ -47,7 +47,7 @@ function make(code,{enabled=true,absent=false,scenario='',statsGate,boardGate}={
  if(failure==='false')sdk[method]=()=>Promise.resolve({success:false});
  const canvas=createCanvas(192,256),ctx={console,innerWidth:192,innerHeight:256,devicePixelRatio:1,
   document:{getElementById:()=>canvas,createElement:()=>createCanvas(1,1)},addEventListener(){},
-  localStorage:{},setInterval(){},setTimeout(){},requestAnimationFrame(f){ctx.frame=f},URW:enabled};
+  localStorage:{},setInterval(){},setTimeout(){},requestAnimationFrame(f){ctx.frame=f}};
  canvas.addEventListener=()=>{};
  ctx.window=ctx.self=ctx;if(!absent)ctx.Wavedash=sdk;vm.runInNewContext(code,ctx);let ts=0;
  return {api:ctx.test,calls,violations,unlocked,advance(n){for(let i=0;i<n;i++)ctx.frame(ts+=1000/60)}};
@@ -56,14 +56,19 @@ function make(code,{enabled=true,absent=false,scenario='',statsGate,boardGate}={
  const errors=[];process.on('unhandledRejection',e=>errors.push(e.message));
  const input=source+probe,minified=(await require('terser').minify(input,require('../build-options.cjs'))).code;
  for(const [label,code] of [['source',input],['minified',minified]]){
-  for(const options of [{enabled:false},{absent:true}]){
+  for(const options of [{absent:true}]){
    const g=make(code,options);g.api.landed();g.api.rescue();g.api.power(true);g.api.win(43,100000,3);await tick();
-   assert.deepEqual(g.calls,[],'no SDK call without explicit activation');assert.equal(g.api.error(),'');
+   assert.deepEqual(g.calls,[],'no platform calls without the SDK');assert.equal(g.api.error(),'');
+  }
+  for(const response of [{success:true,data:false},{success:true},{success:true,data:1},{success:false,data:true}]){
+   const gate=deferred(),r=make(code,{statsGate:gate});r.api.landed();r.api.rescue();
+   gate.resolve(response);await tick();assert.equal(r.unlocked.size,0,'stats must confirm data === true');
   }
   const statsGate=deferred(),g=make(code,{statsGate});g.api.landed();
+  assert.deepEqual(g.calls.slice(0,2),[['init'],['stats']],'host injection initializes without an extra flag');
   g.api.rescue();g.api.rescue();g.api.power(false);g.api.power(true);
   g.api.combo(9);g.api.graze(29);await tick();assert.equal(g.unlocked.size,0,'trophies waiting for stats');
-  statsGate.resolve({success:true});await tick();assert.deepEqual([...g.unlocked].sort(),['BLADE','BLAST','RESCUE']);
+  statsGate.resolve({success:true,data:true});await tick();assert.deepEqual([...g.unlocked].sort(),['BLADE','BLAST','RESCUE']);
   assert.equal(g.calls.filter(c=>c[0]==='award'&&c[1]==='RESCUE').length,1,'deduplication');
   g.api.combo(10);g.api.graze(30);g.api.save();g.api.defeatMiniboss();g.advance(120);g.api.win(43,100000,3);await tick();
   assert.deepEqual([...g.unlocked].sort(),[...ids].sort(),'the ten real conditions');
@@ -94,6 +99,6 @@ function make(code,{enabled=true,absent=false,scenario='',statsGate,boardGate}={
    }
   }
   assert.deepEqual(errors,[],'no unhandled rejection');
-  console.log('PASS '+label+': SDK disabled, 10 trophies, 3 leaderboards, thresholds, win/loss, timer/pause, restart, deferred stats, '+failureCount+' SDK failures');
+  console.log('PASS '+label+': SDK absent/present, 10 trophies, 3 leaderboards, thresholds, win/loss, timer/pause, restart, deferred stats, '+failureCount+' SDK failures');
  }
 })().catch(e=>{console.error(e);process.exitCode=1});

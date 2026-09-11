@@ -187,10 +187,15 @@ live in [achievements.json](wavedash/achievements.json) and
 
 [wavedash.toml](wavedash.toml) holds the game identifier and targets only
 `dist/wavedash`, with `index.html` as the entry point. The SDK is injected by the
-host. The integration stays **disabled by default** as long as `self.URW` is not
-enabled. Before enabling it, the validation of the `requestStats()` response
-still needs to be completed with `data === true`, then the remote definitions and
-the real calls need to be checked.
+host. When the SDK is present, the game calls `Wavedash.init()` automatically
+so the platform can dismiss its loader. Without the SDK, no platform calls run.
+Achievements wait for `requestStats()` to confirm `success` and `data === true`.
+Remote definitions and real calls still need to be checked in a connected session.
+
+After changing the source, run `npm run build` before `wavedash dev`: the CLI
+serves `dist/wavedash`, not `src/`. Reload the preview after rebuilding. Uploading
+an older build keeps its old code, so upload the rebuilt folder for the same fix
+on the platform.
 
 The [presentation video](wavedash/wavedash-gameplay.mp4) and the
 [cover](media/cover.png), [thumbnail](media/thumbnail.png) and
